@@ -1,8 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, ArrowLeft, Users, PlusCircle } from "lucide-react";
+import { Home, ArrowLeft, Users, PlusCircle, CalendarCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import UserManagement from "@/components/admin/UserManagement";
 import HouseManagement from "@/components/admin/HouseManagement";
+import BookingManagement from "@/components/admin/BookingManagement";
 
 const Admin = () => {
   return (
@@ -25,20 +26,21 @@ const Admin = () => {
           <TabsList className="mb-6">
             <TabsTrigger value="users" className="gap-2 font-body">
               <Users className="w-4 h-4" />
-              Kullanıcı Yönetimi
+              Kullanıcılar
             </TabsTrigger>
             <TabsTrigger value="houses" className="gap-2 font-body">
               <PlusCircle className="w-4 h-4" />
-              Ev Yönetimi
+              Evler
+            </TabsTrigger>
+            <TabsTrigger value="bookings" className="gap-2 font-body">
+              <CalendarCheck className="w-4 h-4" />
+              Rezervasyonlar
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="users">
-            <UserManagement />
-          </TabsContent>
-          <TabsContent value="houses">
-            <HouseManagement />
-          </TabsContent>
+          <TabsContent value="users"><UserManagement /></TabsContent>
+          <TabsContent value="houses"><HouseManagement /></TabsContent>
+          <TabsContent value="bookings"><BookingManagement /></TabsContent>
         </Tabs>
       </main>
     </div>
