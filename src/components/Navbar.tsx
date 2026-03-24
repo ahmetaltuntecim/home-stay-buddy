@@ -10,6 +10,7 @@ import { lovable } from "@/integrations/lovable";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, profile, loading, signOut } = useAuth();
+  const { hasAdminAccess } = useUserRole();
 
   const handleSignIn = async () => {
     await lovable.auth.signInWithOAuth("google");
