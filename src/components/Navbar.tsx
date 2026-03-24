@@ -40,6 +40,12 @@ const Navbar = () => {
                     </Button>
                   </Link>
                 )}
+                <Link to="/my-bookings">
+                  <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground bg-transparent hover:bg-primary-foreground/10 font-body gap-2">
+                    <CalendarCheck className="w-4 h-4" />
+                    Rezervasyonlarım
+                  </Button>
+                </Link>
                 <Avatar className="h-9 w-9 border-2 border-primary-foreground/30">
                   <AvatarImage src={profile?.avatar_url || user.user_metadata?.avatar_url} />
                   <AvatarFallback className="bg-accent text-accent-foreground text-xs font-bold">
