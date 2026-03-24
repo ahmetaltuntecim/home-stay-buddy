@@ -1,8 +1,10 @@
-import { Home, Menu, X, LogOut } from "lucide-react";
+import { Home, Menu, X, LogOut, Shield } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { lovable } from "@/integrations/lovable";
 
 const Navbar = () => {
