@@ -1,4 +1,4 @@
-import { Home, Menu, X, LogOut, Shield } from "lucide-react";
+import { Home, Menu, X, LogOut, Shield, CalendarCheck } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
