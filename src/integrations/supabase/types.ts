@@ -14,8 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          created_at: string
+          end_date: string
+          house_id: string
+          id: string
+          start_date: string
+          status: Database["public"]["Enums"]["booking_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          house_id: string
+          id?: string
+          start_date: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          house_id?: string
+          id?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       houses: {
         Row: {
+          available_from: string | null
+          available_to: string | null
           capacity: number
           created_at: string
           created_by: string | null
@@ -31,6 +74,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          available_from?: string | null
+          available_to?: string | null
           capacity?: number
           created_at?: string
           created_by?: string | null
@@ -46,6 +91,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          available_from?: string | null
+          available_to?: string | null
           capacity?: number
           created_at?: string
           created_by?: string | null
@@ -122,6 +169,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "mod" | "user"
+      booking_status: "pending" | "confirmed" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -250,6 +298,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "mod", "user"],
+      booking_status: ["pending", "confirmed", "rejected"],
     },
   },
 } as const
