@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
+import HouseDetail from "./pages/HouseDetail.tsx";
+import MyBookings from "./pages/MyBookings.tsx";
 import AdminRoute from "./components/AdminRoute";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -20,6 +22,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/house/:id" element={<HouseDetail />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
