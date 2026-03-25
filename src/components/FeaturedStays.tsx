@@ -8,10 +8,10 @@ import stayVilla from "@/assets/stay-villa.jpg";
 import stayTreehouse from "@/assets/stay-treehouse.jpg";
 
 const fallbackStays = [
-  { id: "f1", title: "Mountain Sunrise Cabin", location: "Aspen, Colorado", price: 185, rating: 4.9, reviews_count: 127, image_url: stayMountain, tag: "Superhost" },
-  { id: "f2", title: "Beachfront Bungalow", location: "Tulum, Mexico", price: 220, rating: 4.8, reviews_count: 94, image_url: stayBeach, tag: "Popular" },
-  { id: "f3", title: "Tuscan Stone Villa", location: "Chianti, Italy", price: 310, rating: 5.0, reviews_count: 63, image_url: stayVilla, tag: "Luxe" },
-  { id: "f4", title: "Enchanted Treehouse", location: "Blue Ridge, Georgia", price: 145, rating: 4.9, reviews_count: 208, image_url: stayTreehouse, tag: "Guest Favorite" },
+  { id: "f1", title: "Dağ Evi", location: "Bolu, Türkiye", price: 1850, rating: 4.9, reviews_count: 127, image_url: stayMountain, tag: "Süper Ev Sahibi" },
+  { id: "f2", title: "Sahil Bungalovu", location: "Antalya, Türkiye", price: 2200, rating: 4.8, reviews_count: 94, image_url: stayBeach, tag: "Popüler" },
+  { id: "f3", title: "Taş Villa", location: "Kapadokya, Türkiye", price: 3100, rating: 5.0, reviews_count: 63, image_url: stayVilla, tag: "Lüks" },
+  { id: "f4", title: "Ağaç Ev", location: "Sapanca, Türkiye", price: 1450, rating: 4.9, reviews_count: 208, image_url: stayTreehouse, tag: "Misafir Favorisi" },
 ];
 
 const placeholderImages = [stayMountain, stayBeach, stayVilla, stayTreehouse];
@@ -44,8 +44,8 @@ const FeaturedStays = () => {
     <section className="py-20 md:py-28">
       <div className="container mx-auto px-4">
         <div className="text-center mb-14">
-          <p className="font-body text-accent font-semibold tracking-wide uppercase text-sm mb-3">Handpicked for you</p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground">Featured Home Stays</h2>
+          <p className="font-body text-accent font-semibold tracking-wide uppercase text-sm mb-3">Sizin için seçtiklerimiz</p>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground">Öne Çıkan Evler</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

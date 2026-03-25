@@ -22,25 +22,25 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="users">
+        <Tabs defaultValue="bookings">
           <TabsList className="mb-6">
-            <TabsTrigger value="users" className="gap-2 font-body">
-              <Users className="w-4 h-4" />
-              Kullanıcılar
+            <TabsTrigger value="bookings" className="gap-2 font-body">
+              <CalendarCheck className="w-4 h-4" />
+              Takvim & Rezervasyonlar
             </TabsTrigger>
             <TabsTrigger value="houses" className="gap-2 font-body">
               <PlusCircle className="w-4 h-4" />
               Evler
             </TabsTrigger>
-            <TabsTrigger value="bookings" className="gap-2 font-body">
-              <CalendarCheck className="w-4 h-4" />
-              Rezervasyonlar
+            <TabsTrigger value="users" className="gap-2 font-body">
+              <Users className="w-4 h-4" />
+              Kullanıcılar
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="users"><UserManagement /></TabsContent>
-          <TabsContent value="houses"><HouseManagement /></TabsContent>
           <TabsContent value="bookings"><BookingManagement /></TabsContent>
+          <TabsContent value="houses"><HouseManagement /></TabsContent>
+          <TabsContent value="users"><UserManagement /></TabsContent>
         </Tabs>
       </main>
     </div>

@@ -25,10 +25,6 @@ const Navbar = () => {
         </a>
 
         <div className="hidden md:flex items-center gap-8 font-body text-sm font-medium text-primary-foreground/80">
-          <a href="#" className="hover:text-primary-foreground transition-colors">Explore</a>
-          <a href="#" className="hover:text-primary-foreground transition-colors">Experiences</a>
-          <a href="#" className="hover:text-primary-foreground transition-colors">About</a>
-
           {!loading && (
             user ? (
               <div className="flex items-center gap-3">
@@ -81,22 +77,29 @@ const Navbar = () => {
 
       {open && (
         <div className="md:hidden bg-card/95 backdrop-blur-md border-t border-border p-4 space-y-3 font-body">
-          <a href="#" className="block py-2 text-foreground">Explore</a>
-          <a href="#" className="block py-2 text-foreground">Experiences</a>
-          <a href="#" className="block py-2 text-foreground">About</a>
           {!loading && (
             user ? (
-              <div className="flex items-center gap-3 pt-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={profile?.avatar_url || user.user_metadata?.avatar_url} />
-                  <AvatarFallback className="bg-accent text-accent-foreground text-xs">
-                    {(profile?.display_name || user.user_metadata?.full_name || "U").charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <Button className="flex-1 gap-2" onClick={signOut}>
-                  <LogOut className="w-4 h-4" />
-                  Çıkış Yap
-                </Button>
+              <div className="space-y-3">
+                {hasAdminAccess && (
+                  <Link to="/admin" className="block py-2 text-foreground" onClick={() => setOpen(false)}>
+                    Admin Paneli
+                  </Link>
+                )}
+                <Link to="/my-bookings" className="block py-2 text-foreground" onClick={() => setOpen(false)}>
+                  Rezervasyonlarım
+                </Link>
+                <div className="flex items-center gap-3 pt-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={profile?.avatar_url || user.user_metadata?.avatar_url} />
+                    <AvatarFallback className="bg-accent text-accent-foreground text-xs">
+                      {(profile?.display_name || user.user_metadata?.full_name || "U").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button className="flex-1 gap-2" onClick={signOut}>
+                    <LogOut className="w-4 h-4" />
+                    Çıkış Yap
+                  </Button>
+                </div>
               </div>
             ) : (
               <Button className="w-full" onClick={handleSignIn}>
