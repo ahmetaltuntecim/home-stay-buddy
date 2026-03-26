@@ -65,8 +65,11 @@ export type Database = {
           description: string | null
           id: string
           image_url: string | null
+          latitude: number | null
           location: string | null
+          longitude: number | null
           price: number
+          private_description: string | null
           rating: number | null
           reviews_count: number | null
           tag: string | null
@@ -82,8 +85,11 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           price: number
+          private_description?: string | null
           rating?: number | null
           reviews_count?: number | null
           tag?: string | null
@@ -99,8 +105,11 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           price?: number
+          private_description?: string | null
           rating?: number | null
           reviews_count?: number | null
           tag?: string | null

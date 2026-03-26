@@ -16,17 +16,21 @@ import { cn } from "@/lib/utils";
 interface HouseForm {
   title: string;
   description: string;
+  private_description: string;
   capacity: string;
   price: string;
   image_url: string;
   location: string;
   tag: string;
+  latitude: string;
+  longitude: string;
   available_from: Date | undefined;
   available_to: Date | undefined;
 }
 
 const emptyForm: HouseForm = {
-  title: "", description: "", capacity: "2", price: "", image_url: "", location: "", tag: "",
+  title: "", description: "", private_description: "", capacity: "2", price: "", image_url: "", location: "", tag: "",
+  latitude: "", longitude: "",
   available_from: undefined, available_to: undefined,
 };
 
@@ -54,11 +58,14 @@ const HouseManagement = () => {
     const payload: any = {
       title: form.title.trim(),
       description: form.description.trim() || null,
+      private_description: form.private_description.trim() || null,
       capacity: parseInt(form.capacity) || 2,
       price: parseFloat(form.price),
       image_url: form.image_url.trim() || null,
       location: form.location.trim() || null,
       tag: form.tag.trim() || null,
+      latitude: form.latitude ? parseFloat(form.latitude) : null,
+      longitude: form.longitude ? parseFloat(form.longitude) : null,
       available_from: form.available_from ? format(form.available_from, "yyyy-MM-dd") : null,
       available_to: form.available_to ? format(form.available_to, "yyyy-MM-dd") : null,
     };
@@ -95,11 +102,14 @@ const HouseManagement = () => {
     setForm({
       title: h.title || "",
       description: h.description || "",
+      private_description: h.private_description || "",
       capacity: String(h.capacity || 2),
       price: String(h.price || ""),
       image_url: h.image_url || "",
       location: h.location || "",
       tag: h.tag || "",
+      latitude: h.latitude ? String(h.latitude) : "",
+      longitude: h.longitude ? String(h.longitude) : "",
       available_from: h.available_from ? new Date(h.available_from) : undefined,
       available_to: h.available_to ? new Date(h.available_to) : undefined,
     });
@@ -189,9 +199,21 @@ const HouseManagement = () => {
             <Label className="font-body">Etiket</Label>
             <Input value={form.tag} onChange={(e) => update("tag", e.target.value)} placeholder="Superhost" />
           </div>
+          <div className="space-y-2">
+            <Label className="font-body">Enlem (Latitude)</Label>
+            <Input type="number" step="any" value={form.latitude} onChange={(e) => update("latitude", e.target.value)} placeholder="40.7128" />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-body">Boylam (Longitude)</Label>
+            <Input type="number" step="any" value={form.longitude} onChange={(e) => update("longitude", e.target.value)} placeholder="29.9441" />
+          </div>
           <div className="md:col-span-2 space-y-2">
             <Label className="font-body">Açıklama</Label>
             <Textarea value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Ev hakkında kısa bilgi..." />
+          </div>
+          <div className="md:col-span-2 space-y-2">
+            <Label className="font-body">Gizli Açıklama (Sadece onaylı üyeler görür)</Label>
+            <Textarea value={form.private_description} onChange={(e) => update("private_description", e.target.value)} placeholder="Adres, yol tarifi vb. gizli bilgiler..." />
           </div>
           <div className="md:col-span-2">
             <Button type="submit" disabled={submitting} className="font-body">
