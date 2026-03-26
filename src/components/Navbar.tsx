@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { lovable } from "@/integrations/lovable";
+import { cn } from "@/lib/utils";
 
 const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
   const [open, setOpen] = useState(false);
