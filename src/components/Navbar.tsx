@@ -7,10 +7,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { lovable } from "@/integrations/lovable";
 
-const Navbar = () => {
+const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
   const [open, setOpen] = useState(false);
   const { user, profile, loading, signOut } = useAuth();
   const { hasAdminAccess } = useUserRole();
+  const isDark = variant === "dark";
+  const textClass = isDark ? "text-primary-foreground" : "text-foreground";
+  const textMutedClass = isDark ? "text-primary-foreground/80" : "text-muted-foreground";
+  const borderClass = isDark ? "border-primary-foreground/30" : "border-border";
+  const hoverBgClass = isDark ? "hover:bg-primary-foreground/10" : "hover:bg-muted";
 
   const handleSignIn = async () => {
     await lovable.auth.signInWithOAuth("google");
