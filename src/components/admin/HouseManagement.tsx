@@ -199,9 +199,21 @@ const HouseManagement = () => {
             <Label className="font-body">Etiket</Label>
             <Input value={form.tag} onChange={(e) => update("tag", e.target.value)} placeholder="Superhost" />
           </div>
+          <div className="space-y-2">
+            <Label className="font-body">Enlem (Latitude)</Label>
+            <Input type="number" step="any" value={form.latitude} onChange={(e) => update("latitude", e.target.value)} placeholder="40.7128" />
+          </div>
+          <div className="space-y-2">
+            <Label className="font-body">Boylam (Longitude)</Label>
+            <Input type="number" step="any" value={form.longitude} onChange={(e) => update("longitude", e.target.value)} placeholder="29.9441" />
+          </div>
           <div className="md:col-span-2 space-y-2">
             <Label className="font-body">Açıklama</Label>
             <Textarea value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Ev hakkında kısa bilgi..." />
+          </div>
+          <div className="md:col-span-2 space-y-2">
+            <Label className="font-body">Gizli Açıklama (Sadece onaylı üyeler görür)</Label>
+            <Textarea value={form.private_description} onChange={(e) => update("private_description", e.target.value)} placeholder="Adres, yol tarifi vb. gizli bilgiler..." />
           </div>
           <div className="md:col-span-2">
             <Button type="submit" disabled={submitting} className="font-body">
