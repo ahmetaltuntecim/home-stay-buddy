@@ -5,7 +5,7 @@ import FeaturedStays from "@/components/FeaturedStays";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <Navbar variant="light" />
       
       <FeaturedStays />
     </div>
