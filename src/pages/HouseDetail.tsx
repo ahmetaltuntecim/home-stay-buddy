@@ -2,15 +2,27 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ArrowLeft, CalendarIcon, MapPin, Users, Star } from "lucide-react";
+import { ArrowLeft, CalendarIcon, MapPin, Users, Star, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { format, eachDayOfInterval, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import stayMountain from "@/assets/stay-mountain.jpg";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Fix default marker icon
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 interface BookedDateInfo {
   date: Date;
@@ -21,12 +33,14 @@ interface BookedDateInfo {
 const HouseDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { hasAdminAccess } = useUserRole();
   const [house, setHouse] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [bookedDatesInfo, setBookedDatesInfo] = useState<BookedDateInfo[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [hasConfirmedBooking, setHasConfirmedBooking] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -45,6 +59,14 @@ const HouseDetail = () => {
         .in("status", ["confirmed", "pending"]);
 
       if (!bookings || bookings.length === 0) return;
+
+      // Check if current user has a confirmed booking for this house
+      if (user) {
+        const userConfirmed = bookings.some(
+          (b: any) => b.user_id === user.id && b.status === "confirmed"
+        );
+        setHasConfirmedBooking(userConfirmed);
+      }
 
       const userIds = [...new Set(bookings.map((b: any) => b.user_id))];
       const { data: profiles } = await supabase
@@ -67,7 +89,9 @@ const HouseDetail = () => {
 
     fetchHouse();
     fetchBookedDates();
-  }, [id]);
+  }, [id, user]);
+
+  const canSeePrivate = hasAdminAccess || hasConfirmedBooking;
 
   const getDateInfo = (date: Date) => {
     return bookedDatesInfo.find((bi) => bi.date.toDateString() === date.toDateString());
@@ -125,6 +149,8 @@ const HouseDetail = () => {
     ? Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)))
     : 0;
 
+  const hasCoords = house.latitude && house.longitude;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="bg-primary">
@@ -169,6 +195,62 @@ const HouseDetail = () => {
                 </p>
               )}
             </div>
+
+            {/* Private description - only for confirmed users or admin/mod */}
+            {canSeePrivate && house.private_description && (
+              <div className="bg-card rounded-xl border border-border p-6">
+                <h3 className="font-display text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-accent" />
+                  Detaylı Bilgiler
+                </h3>
+                <p className="font-body text-foreground/80 leading-relaxed whitespace-pre-wrap">{house.private_description}</p>
+              </div>
+            )}
+
+            {!canSeePrivate && house.private_description && (
+              <div className="bg-muted/50 rounded-xl border border-border p-6 text-center">
+                <Lock className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+                <p className="font-body text-sm text-muted-foreground">
+                  Detaylı bilgiler sadece onaylanmış rezervasyonu olan üyeler tarafından görülebilir.
+                </p>
+              </div>
+            )}
+
+            {/* Map - only for confirmed users or admin/mod */}
+            {canSeePrivate && hasCoords && (
+              <div className="bg-card rounded-xl border border-border p-6">
+                <h3 className="font-display text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-accent" />
+                  Konum
+                </h3>
+                <div className="rounded-xl overflow-hidden h-[300px] md:h-[400px] touch-pan-y">
+                  <MapContainer
+                    center={[Number(house.latitude), Number(house.longitude)]}
+                    zoom={13}
+                    scrollWheelZoom={false}
+                    dragging={true}
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <Marker position={[Number(house.latitude), Number(house.longitude)]}>
+                      <Popup>{house.title}</Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
+              </div>
+            )}
+
+            {!canSeePrivate && hasCoords && (
+              <div className="bg-muted/50 rounded-xl border border-border p-6 text-center">
+                <MapPin className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+                <p className="font-body text-sm text-muted-foreground">
+                  Harita bilgisi sadece onaylanmış rezervasyonu olan üyeler tarafından görülebilir.
+                </p>
+              </div>
+            )}
 
             {/* Booking calendar with names */}
             <div className="bg-card rounded-xl border border-border p-6">
