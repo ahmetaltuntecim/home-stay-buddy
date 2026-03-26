@@ -16,17 +16,21 @@ import { cn } from "@/lib/utils";
 interface HouseForm {
   title: string;
   description: string;
+  private_description: string;
   capacity: string;
   price: string;
   image_url: string;
   location: string;
   tag: string;
+  latitude: string;
+  longitude: string;
   available_from: Date | undefined;
   available_to: Date | undefined;
 }
 
 const emptyForm: HouseForm = {
-  title: "", description: "", capacity: "2", price: "", image_url: "", location: "", tag: "",
+  title: "", description: "", private_description: "", capacity: "2", price: "", image_url: "", location: "", tag: "",
+  latitude: "", longitude: "",
   available_from: undefined, available_to: undefined,
 };
 
