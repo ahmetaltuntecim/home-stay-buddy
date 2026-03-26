@@ -3,6 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -12,6 +15,7 @@ interface UserWithRole {
   user_id: string;
   display_name: string | null;
   avatar_url: string | null;
+  approved: boolean;
   role: AppRole;
   role_row_id: string;
 }
@@ -22,7 +26,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, avatar_url");
+    const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, avatar_url, approved");
     const { data: roles } = await supabase.from("user_roles").select("id, user_id, role");
 
     if (profiles && roles) {
@@ -32,6 +36,7 @@ const UserManagement = () => {
           user_id: p.user_id,
           display_name: p.display_name,
           avatar_url: p.avatar_url,
+          approved: p.approved ?? false,
           role: (r?.role as AppRole) ?? "user",
           role_row_id: r?.id ?? "",
         };
@@ -41,23 +46,25 @@ const UserManagement = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  useEffect(() => { fetchUsers(); }, []);
 
   const handleRoleChange = async (roleRowId: string, newRole: AppRole) => {
-    const { error } = await supabase
-      .from("user_roles")
-      .update({ role: newRole })
-      .eq("id", roleRowId);
-
+    const { error } = await supabase.from("user_roles").update({ role: newRole }).eq("id", roleRowId);
     if (error) {
       toast.error("Rol güncellenemedi: " + error.message);
     } else {
       toast.success("Rol güncellendi");
-      setUsers((prev) =>
-        prev.map((u) => (u.role_row_id === roleRowId ? { ...u, role: newRole } : u))
-      );
+      setUsers((prev) => prev.map((u) => (u.role_row_id === roleRowId ? { ...u, role: newRole } : u)));
+    }
+  };
+
+  const handleApproval = async (userId: string, approved: boolean) => {
+    const { error } = await supabase.from("profiles").update({ approved }).eq("user_id", userId);
+    if (error) {
+      toast.error("Durum güncellenemedi: " + error.message);
+    } else {
+      toast.success(approved ? "Üye onaylandı" : "Üye onayı kaldırıldı");
+      setUsers((prev) => prev.map((u) => (u.user_id === userId ? { ...u, approved } : u)));
     }
   };
 
@@ -69,8 +76,9 @@ const UserManagement = () => {
         <TableHeader>
           <TableRow>
             <TableHead className="font-body">Kullanıcı</TableHead>
-            <TableHead className="font-body">User ID</TableHead>
-            <TableHead className="font-body text-right">Rol</TableHead>
+            <TableHead className="font-body">Durum</TableHead>
+            <TableHead className="font-body">Rol</TableHead>
+            <TableHead className="font-body text-right">İşlem</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -87,12 +95,20 @@ const UserManagement = () => {
                   <span className="font-body font-medium text-foreground">{u.display_name || "—"}</span>
                 </div>
               </TableCell>
-              <TableCell className="font-body text-xs text-muted-foreground max-w-[180px] truncate">
-                {u.user_id}
+              <TableCell>
+                {u.approved ? (
+                  <Badge variant="default" className="font-body gap-1 bg-green-600">
+                    <CheckCircle className="w-3 h-3" /> Onaylı
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="font-body gap-1">
+                    <XCircle className="w-3 h-3" /> Bekliyor
+                  </Badge>
+                )}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell>
                 <Select value={u.role} onValueChange={(v) => handleRoleChange(u.role_row_id, v as AppRole)}>
-                  <SelectTrigger className="w-28 ml-auto font-body">
+                  <SelectTrigger className="w-28 font-body">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -101,6 +117,17 @@ const UserManagement = () => {
                     <SelectItem value="user">Üye</SelectItem>
                   </SelectContent>
                 </Select>
+              </TableCell>
+              <TableCell className="text-right">
+                {u.approved ? (
+                  <Button variant="ghost" size="sm" className="font-body text-destructive" onClick={() => handleApproval(u.user_id, false)}>
+                    Onayı Kaldır
+                  </Button>
+                ) : (
+                  <Button variant="default" size="sm" className="font-body" onClick={() => handleApproval(u.user_id, true)}>
+                    Onayla
+                  </Button>
+                )}
               </TableCell>
             </TableRow>
           ))}
