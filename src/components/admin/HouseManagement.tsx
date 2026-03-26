@@ -58,11 +58,14 @@ const HouseManagement = () => {
     const payload: any = {
       title: form.title.trim(),
       description: form.description.trim() || null,
+      private_description: form.private_description.trim() || null,
       capacity: parseInt(form.capacity) || 2,
       price: parseFloat(form.price),
       image_url: form.image_url.trim() || null,
       location: form.location.trim() || null,
       tag: form.tag.trim() || null,
+      latitude: form.latitude ? parseFloat(form.latitude) : null,
+      longitude: form.longitude ? parseFloat(form.longitude) : null,
       available_from: form.available_from ? format(form.available_from, "yyyy-MM-dd") : null,
       available_to: form.available_to ? format(form.available_to, "yyyy-MM-dd") : null,
     };
@@ -99,11 +102,14 @@ const HouseManagement = () => {
     setForm({
       title: h.title || "",
       description: h.description || "",
+      private_description: h.private_description || "",
       capacity: String(h.capacity || 2),
       price: String(h.price || ""),
       image_url: h.image_url || "",
       location: h.location || "",
       tag: h.tag || "",
+      latitude: h.latitude ? String(h.latitude) : "",
+      longitude: h.longitude ? String(h.longitude) : "",
       available_from: h.available_from ? new Date(h.available_from) : undefined,
       available_to: h.available_to ? new Date(h.available_to) : undefined,
     });
