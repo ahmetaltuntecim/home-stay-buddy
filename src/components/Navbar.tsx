@@ -30,25 +30,25 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
           <span className="font-display text-xl font-bold">HomeStay</span>
         </a>
 
-        <div className="hidden md:flex items-center gap-8 font-body text-sm font-medium text-primary-foreground/80">
+        <div className={cn("hidden md:flex items-center gap-8 font-body text-sm font-medium", textMutedClass)}>
           {!loading && (
             user ? (
               <div className="flex items-center gap-3">
                 {hasAdminAccess && (
                   <Link to="/admin">
-                    <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground bg-transparent hover:bg-primary-foreground/10 font-body gap-2">
+                    <Button variant="outline" size="sm" className={cn(borderClass, textClass, "bg-transparent", hoverBgClass, "font-body gap-2")}>
                       <Shield className="w-4 h-4" />
                       Admin
                     </Button>
                   </Link>
                 )}
                 <Link to="/my-bookings">
-                  <Button variant="outline" size="sm" className="border-primary-foreground/30 text-primary-foreground bg-transparent hover:bg-primary-foreground/10 font-body gap-2">
+                  <Button variant="outline" size="sm" className={cn(borderClass, textClass, "bg-transparent", hoverBgClass, "font-body gap-2")}>
                     <CalendarCheck className="w-4 h-4" />
                     Rezervasyonlarım
                   </Button>
                 </Link>
-                <Avatar className="h-9 w-9 border-2 border-primary-foreground/30">
+                <Avatar className={cn("h-9 w-9 border-2", borderClass)}>
                   <AvatarImage src={profile?.avatar_url || user.user_metadata?.avatar_url} />
                   <AvatarFallback className="bg-accent text-accent-foreground text-xs font-bold">
                     {(profile?.display_name || user.user_metadata?.full_name || "U").charAt(0).toUpperCase()}
@@ -57,7 +57,7 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-primary-foreground/30 text-primary-foreground bg-transparent hover:bg-primary-foreground/10 font-body gap-2"
+                  className={cn(borderClass, textClass, "bg-transparent", hoverBgClass, "font-body gap-2")}
                   onClick={signOut}
                 >
                   <LogOut className="w-4 h-4" />
@@ -67,7 +67,7 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
             ) : (
               <Button
                 variant="outline"
-                className="border-primary-foreground/30 text-primary-foreground bg-transparent hover:bg-primary-foreground/10 font-body"
+                className={cn(borderClass, textClass, "bg-transparent", hoverBgClass, "font-body")}
                 onClick={handleSignIn}
               >
                 Google ile Giriş
@@ -76,7 +76,7 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
           )}
         </div>
 
-        <button className="md:hidden text-primary-foreground" onClick={() => setOpen(!open)}>
+        <button className={cn("md:hidden", textClass)} onClick={() => setOpen(!open)}>
           {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
