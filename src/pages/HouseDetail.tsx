@@ -47,7 +47,7 @@ const HouseDetail = () => {
 
     const fetchHouse = async () => {
       // Fetch public data from the view (accessible to everyone)
-      const { data } = await (supabase.from as any)("houses_public").select("*").eq("id", id).single();
+      const { data } = await supabase.from("houses_public" as any).select("*").eq("id", id).single();
       if (data) {
         setHouse(data);
         // Fetch private details via RPC (only returns data for authorized users)

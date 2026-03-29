@@ -22,7 +22,7 @@ const FeaturedStays = () => {
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await (supabase.from as any)("houses_public").select("*").order("created_at", { ascending: false }).limit(8);
+      const { data } = await supabase.from("houses_public" as any).select("*").order("created_at", { ascending: false }).limit(8);
       if (data && data.length > 0) {
         setStays(data.map((h: any, i: number) => ({
           id: h.id,
