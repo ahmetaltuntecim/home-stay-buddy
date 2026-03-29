@@ -46,8 +46,22 @@ const HouseDetail = () => {
     if (!id) return;
 
     const fetchHouse = async () => {
-      const { data } = await supabase.from("houses").select("*").eq("id", id).single();
-      if (data) setHouse(data);
+      // Fetch public data from the view (accessible to everyone)
+      const { data } = await (supabase.from as any)("houses_public").select("*").eq("id", id).single();
+      if (data) {
+        setHouse(data);
+        // Fetch private details via RPC (only returns data for authorized users)
+        const { data: privateData } = await supabase.rpc("get_house_private_details", { p_house_id: id });
+        if (privateData && privateData.length > 0) {
+          setHouse((prev: any) => ({
+            ...prev,
+            private_description: privateData[0].private_description,
+            latitude: privateData[0].latitude,
+            longitude: privateData[0].longitude,
+          }));
+          setHasConfirmedBooking(true);
+        }
+      }
       setLoading(false);
     };
 
@@ -60,12 +74,11 @@ const HouseDetail = () => {
 
       if (!bookings || bookings.length === 0) return;
 
-      // Check if current user has a confirmed booking for this house
       if (user) {
         const userConfirmed = bookings.some(
           (b: any) => b.user_id === user.id && b.status === "confirmed"
         );
-        setHasConfirmedBooking(userConfirmed);
+        if (userConfirmed) setHasConfirmedBooking(true);
       }
 
       const userIds = [...new Set(bookings.map((b: any) => b.user_id))];
@@ -91,6 +104,7 @@ const HouseDetail = () => {
     fetchBookedDates();
   }, [id, user]);
 
+  // canSeePrivate is true if RPC returned private data (meaning user is admin/mod or has confirmed booking)
   const canSeePrivate = hasAdminAccess || hasConfirmedBooking;
 
   const getDateInfo = (date: Date) => {
