@@ -53,6 +53,13 @@ export type Database = {
             referencedRelation: "houses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "bookings_house_id_fkey"
+            columns: ["house_id"]
+            isOneToOne: false
+            referencedRelation: "houses_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       houses: {
@@ -168,9 +175,71 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      houses_public: {
+        Row: {
+          available_from: string | null
+          available_to: string | null
+          capacity: number | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string | null
+          image_url: string | null
+          location: string | null
+          price: number | null
+          rating: number | null
+          reviews_count: number | null
+          tag: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          available_from?: string | null
+          available_to?: string | null
+          capacity?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string | null
+          image_url?: string | null
+          location?: string | null
+          price?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          tag?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          available_from?: string | null
+          available_to?: string | null
+          capacity?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string | null
+          image_url?: string | null
+          location?: string | null
+          price?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          tag?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      get_house_private_details: {
+        Args: { p_house_id: string }
+        Returns: {
+          latitude: number
+          longitude: number
+          private_description: string
+        }[]
+      }
+      get_own_approved: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
