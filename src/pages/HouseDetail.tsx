@@ -291,8 +291,8 @@ const HouseDetail = () => {
             </div>
           </div>
 
-          {/* Right: Booking Card */}
-          <div className="lg:col-span-1">
+          {/* Right: Booking Card - only for logged-in users */}
+          {user && <div className="lg:col-span-1">
             <div className="bg-card rounded-2xl border border-border p-6 sticky top-8 space-y-5">
               <div className="font-body">
                 <span className="text-2xl font-bold text-foreground">₺{Number(house.price).toLocaleString()}</span>
@@ -310,7 +310,37 @@ const HouseDetail = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={startDate} onSelect={setStartDate} disabled={isDateDisabled} initialFocus className="p-3 pointer-events-auto" />
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        onSelect={setStartDate}
+                        disabled={isDateDisabled}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                        modifiers={{
+                          confirmed: bookedDatesInfo.filter(d => d.status === "confirmed").map(d => d.date),
+                          pending: bookedDatesInfo.filter(d => d.status === "pending").map(d => d.date),
+                        }}
+                        modifiersClassNames={{
+                          confirmed: "bg-destructive/20 text-destructive",
+                          pending: "bg-yellow-100 text-yellow-800",
+                        }}
+                        components={{
+                          DayContent: ({ date }) => {
+                            const info = getDateInfo(date);
+                            return (
+                              <div className="flex flex-col items-center">
+                                <span>{date.getDate()}</span>
+                                {info && (
+                                  <span className="text-[8px] leading-tight truncate max-w-[3rem]">
+                                    {info.userName}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          }
+                        }}
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -332,6 +362,29 @@ const HouseDetail = () => {
                         disabled={(date) => isDateDisabled(date) || (startDate ? date <= startDate : false)}
                         initialFocus
                         className="p-3 pointer-events-auto"
+                        modifiers={{
+                          confirmed: bookedDatesInfo.filter(d => d.status === "confirmed").map(d => d.date),
+                          pending: bookedDatesInfo.filter(d => d.status === "pending").map(d => d.date),
+                        }}
+                        modifiersClassNames={{
+                          confirmed: "bg-destructive/20 text-destructive",
+                          pending: "bg-yellow-100 text-yellow-800",
+                        }}
+                        components={{
+                          DayContent: ({ date }) => {
+                            const info = getDateInfo(date);
+                            return (
+                              <div className="flex flex-col items-center">
+                                <span>{date.getDate()}</span>
+                                {info && (
+                                  <span className="text-[8px] leading-tight truncate max-w-[3rem]">
+                                    {info.userName}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          }
+                        }}
                       />
                     </PopoverContent>
                   </Popover>
@@ -355,11 +408,8 @@ const HouseDetail = () => {
                 {submitting ? "Gönderiliyor..." : "Rezervasyon Talep Et"}
               </Button>
 
-              {!user && (
-                <p className="font-body text-xs text-muted-foreground text-center">Rezervasyon için giriş yapmalısınız</p>
-              )}
             </div>
-          </div>
+          </div>}
         </div>
       </div>
     </div>
