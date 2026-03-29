@@ -231,6 +231,15 @@ export type Database = {
       }
     }
     Functions: {
+      get_house_availability: {
+        Args: { p_house_id: string }
+        Returns: {
+          display_name: string
+          end_date: string
+          start_date: string
+          status: string
+        }[]
+      }
       get_house_private_details: {
         Args: { p_house_id: string }
         Returns: {

@@ -67,35 +67,14 @@ const HouseDetail = () => {
 
     const fetchBookedDates = async () => {
       const { data: bookings } = await supabase
-        .from("bookings")
-        .select("start_date, end_date, user_id, status")
-        .eq("house_id", id)
-        .in("status", ["confirmed", "pending"]);
+        .rpc("get_house_availability", { p_house_id: id });
 
       if (!bookings || bookings.length === 0) return;
-
-      if (user) {
-        const userConfirmed = bookings.some(
-          (b: any) => b.user_id === user.id && b.status === "confirmed"
-        );
-        if (userConfirmed) setHasConfirmedBooking(true);
-      }
-
-      const userIds = [...new Set(bookings.map((b: any) => b.user_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, display_name")
-        .in("user_id", userIds);
-
-      const userMap = new Map(profiles?.map((p: any) => [p.user_id, p.display_name || "Misafir"]) || []);
 
       const infos: BookedDateInfo[] = [];
       bookings.forEach((b: any) => {
         const days = eachDayOfInterval({ start: parseISO(b.start_date), end: parseISO(b.end_date) });
-        const name = b.user_id === "00000000-0000-0000-0000-000000000000"
-          ? "Kapalı"
-          : (userMap.get(b.user_id) || "Misafir");
-        days.forEach((d) => infos.push({ date: d, userName: name, status: b.status }));
+        days.forEach((d) => infos.push({ date: d, userName: b.display_name, status: b.status }));
       });
       setBookedDatesInfo(infos);
     };
