@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { format, eachDayOfInterval, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
-import stayMountain from "@/assets/stay-mountain.jpg";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -159,7 +158,7 @@ const HouseDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <div className="rounded-2xl overflow-hidden aspect-video">
-              <img src={house.image_url || stayMountain} alt={house.title} className="w-full h-full object-cover" />
+              <img src={house.image_url || "/placeholder.svg"} alt={house.title} className="w-full h-full object-cover" />
             </div>
 
             <div>

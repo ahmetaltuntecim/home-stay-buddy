@@ -2,43 +2,55 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Star, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import stayMountain from "@/assets/stay-mountain.jpg";
-import stayBeach from "@/assets/stay-beach.jpg";
-import stayVilla from "@/assets/stay-villa.jpg";
-import stayTreehouse from "@/assets/stay-treehouse.jpg";
-
-const fallbackStays = [
-  { id: "f1", title: "Dağ Evi", location: "Bolu, Türkiye", price: 1850, rating: 4.9, reviews_count: 127, image_url: stayMountain, tag: "Süper Ev Sahibi" },
-  { id: "f2", title: "Sahil Bungalovu", location: "Antalya, Türkiye", price: 2200, rating: 4.8, reviews_count: 94, image_url: stayBeach, tag: "Popüler" },
-  { id: "f3", title: "Taş Villa", location: "Kapadokya, Türkiye", price: 3100, rating: 5.0, reviews_count: 63, image_url: stayVilla, tag: "Lüks" },
-  { id: "f4", title: "Ağaç Ev", location: "Sapanca, Türkiye", price: 1450, rating: 4.9, reviews_count: 208, image_url: stayTreehouse, tag: "Misafir Favorisi" },
-];
-
-const placeholderImages = [stayMountain, stayBeach, stayVilla, stayTreehouse];
 
 const FeaturedStays = () => {
-  const [stays, setStays] = useState(fallbackStays);
-  const [fromDb, setFromDb] = useState(false);
+  const [stays, setStays] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase.from("houses_public" as any).select("*").order("created_at", { ascending: false }).limit(8);
-      if (data && data.length > 0) {
-        setStays(data.map((h: any, i: number) => ({
-          id: h.id,
-          title: h.title,
-          location: h.location || "",
-          price: Number(h.price),
-          rating: Number(h.rating) || 0,
-          reviews_count: h.reviews_count || 0,
-          image_url: h.image_url || placeholderImages[i % placeholderImages.length],
-          tag: h.tag || "",
-        })));
-        setFromDb(true);
+      try {
+        const { data } = await supabase.from("houses_public" as any).select("*").order("created_at", { ascending: false }).limit(8);
+        if (data) {
+          setStays(data.map((h: any) => ({
+            id: h.id,
+            title: h.title,
+            location: h.location || "",
+            price: Number(h.price),
+            rating: Number(h.rating) || 0,
+            reviews_count: h.reviews_count || 0,
+            image_url: h.image_url || "/placeholder.svg",
+            tag: h.tag || "",
+          })));
+        }
+      } catch (error) {
+        console.error("Error loading stays:", error);
+      } finally {
+        setLoading(false);
       }
     };
     load();
   }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 md:py-28">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-14">
+            <p className="font-body text-accent font-semibold tracking-wide uppercase text-sm mb-3">Sizin için seçtiklerimiz</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground">Öne Çıkan Evler</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="animate-pulse bg-muted rounded-2xl aspect-[4/3]" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (stays.length === 0) return null;
 
   return (
     <section className="py-20 md:py-28">
@@ -50,10 +62,8 @@ const FeaturedStays = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stays.map((stay) => {
-            const Wrapper = fromDb ? Link : "div" as any;
-            const wrapperProps = fromDb ? { to: `/house/${stay.id}` } : {};
             return (
-              <Wrapper key={stay.id} {...wrapperProps} className="block">
+              <Link key={stay.id} to={`/house/${stay.id}`} className="block">
                 <article className="group bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-elevated transition-shadow duration-300 cursor-pointer h-full">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img src={stay.image_url} alt={stay.title} loading="lazy" width={640} height={512} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -81,7 +91,7 @@ const FeaturedStays = () => {
                     </p>
                   </div>
                 </article>
-              </Wrapper>
+              </Link>
             );
           })}
         </div>
