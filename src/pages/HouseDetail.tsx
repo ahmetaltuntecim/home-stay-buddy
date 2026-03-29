@@ -104,6 +104,7 @@ const HouseDetail = () => {
     fetchBookedDates();
   }, [id, user]);
 
+  // canSeePrivate is true if RPC returned private data (meaning user is admin/mod or has confirmed booking)
   const canSeePrivate = hasAdminAccess || hasConfirmedBooking;
 
   const getDateInfo = (date: Date) => {
