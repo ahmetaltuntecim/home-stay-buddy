@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { format, eachDayOfInterval, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
+import { useHolidays, isDateHoliday, getHolidayName } from "@/hooks/useHolidays";
 
 interface BookedDateInfo {
   date: Date;
@@ -32,6 +33,10 @@ const HouseDetail = () => {
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isEndOpen, setIsEndOpen] = useState(false);
   const [checkoutMonth, setCheckoutMonth] = useState<Date>(new Date());
+  
+  const { data: holidays = [] } = useHolidays(new Date().getFullYear());
+  const { data: nextYearHolidays = [] } = useHolidays(new Date().getFullYear() + 1);
+  const allHolidays = [...holidays, ...nextYearHolidays];
 
   useEffect(() => {
     if (!id) return;
@@ -257,6 +262,7 @@ const HouseDetail = () => {
                 <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-yellow-400" /> Bekliyor</div>
                 <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-green-600" /> Giriş</div>
                 <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-background border border-border" /> Boş</div>
+                <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Resmi Tatil</div>
               </div>
 
               <div className="space-y-3">
@@ -293,14 +299,17 @@ const HouseDetail = () => {
                         components={{
                           DayContent: ({ date }) => {
                             const info = getDateInfo(date);
+                            const isHoliday = isDateHoliday(date, allHolidays);
+                            const holidayName = getHolidayName(date, allHolidays);
                             return (
-                              <div className="flex flex-col items-center">
+                              <div className="flex flex-col items-center relative w-full h-full justify-center" title={holidayName}>
                                 <span>{date.getDate()}</span>
                                 {info && (
                                   <span className="text-[8px] leading-tight truncate max-w-[3rem]">
                                     {info.userName}
                                   </span>
                                 )}
+                                {isHoliday && <div className="day-holiday-dot" />}
                               </div>
                             );
                           }
@@ -342,14 +351,17 @@ const HouseDetail = () => {
                         components={{
                           DayContent: ({ date }) => {
                             const info = getDateInfo(date);
+                            const isHoliday = isDateHoliday(date, allHolidays);
+                            const holidayName = getHolidayName(date, allHolidays);
                             return (
-                              <div className="flex flex-col items-center">
+                              <div className="flex flex-col items-center relative w-full h-full justify-center" title={holidayName}>
                                 <span>{date.getDate()}</span>
                                 {info && (
                                   <span className="text-[8px] leading-tight truncate max-w-[3rem]">
                                     {info.userName}
                                   </span>
                                 )}
+                                {isHoliday && <div className="day-holiday-dot" />}
                               </div>
                             );
                           }

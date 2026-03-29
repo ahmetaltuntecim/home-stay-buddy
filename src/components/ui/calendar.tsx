@@ -2,15 +2,22 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { addMonths, subMonths } from "date-fns";
+import { useHolidays, isDateHoliday, getHolidayName } from "@/hooks/useHolidays";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  showHolidays?: boolean;
+};
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
+function Calendar({ className, classNames, showOutsideDays = true, showHolidays = true, ...props }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState<Date>(props.month || props.defaultMonth || new Date());
   const [touchStart, setTouchStart] = React.useState<number | null>(null);
+
+  const { data: holidays = [] } = useHolidays(currentMonth.getFullYear());
+  const { data: nextYearHolidays = [] } = useHolidays(currentMonth.getFullYear() + 1);
+  const allHolidays = [...holidays, ...nextYearHolidays];
 
   React.useEffect(() => {
     if (props.month) setCurrentMonth(props.month);
@@ -80,6 +87,17 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         components={{
           IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
           IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
+          DayContent: ({ date, ...dayProps }) => {
+            const isHoliday = showHolidays && isDateHoliday(date, allHolidays);
+            const holidayName = showHolidays ? getHolidayName(date, allHolidays) : undefined;
+            return (
+              <div className="flex flex-col items-center relative w-full h-full justify-center" title={holidayName}>
+                <span>{date.getDate()}</span>
+                {isHoliday && <div className="day-holiday-dot" />}
+              </div>
+            );
+          },
+          ...props.components,
         }}
         {...props}
       />

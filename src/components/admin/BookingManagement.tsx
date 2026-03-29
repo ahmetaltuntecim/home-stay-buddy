@@ -12,6 +12,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, isSameDa
 import { tr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, ChevronLeft, ChevronRight, Trash2, Pencil, Ban, Plus } from "lucide-react";
+import { useHolidays, isDateHoliday, getHolidayName } from "@/hooks/useHolidays";
 
 type BookingStatus = "pending" | "confirmed" | "rejected";
 
@@ -47,6 +48,10 @@ const BookingManagement = () => {
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
   const [editStart, setEditStart] = useState<Date | undefined>();
   const [editEnd, setEditEnd] = useState<Date | undefined>();
+
+  const { data: holidays = [] } = useHolidays(currentMonth.getFullYear());
+  const { data: nextYearHolidays = [] } = useHolidays(currentMonth.getFullYear() + 1);
+  const allHolidays = [...holidays, ...nextYearHolidays];
 
   const fetchData = async () => {
     setLoading(true);
@@ -256,6 +261,7 @@ const BookingManagement = () => {
             <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-destructive/70" /> Dolu (Onaylı)</div>
             <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-yellow-400" /> Bekliyor</div>
             <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-background border border-border" /> Boş</div>
+            <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Resmi Tatil</div>
           </div>
 
           {/* Day grid */}
@@ -280,7 +286,7 @@ const BookingManagement = () => {
                     isPending && "bg-yellow-100 text-yellow-800",
                     !info && "bg-background hover:bg-muted border border-border/50"
                   )}
-                  title={info ? `${info.booking.user_name} (${statusLabels[info.status]})` : "Boş"}
+                  title={info ? `${info.booking.user_name} (${statusLabels[info.status]})` : (getHolidayName(day, allHolidays) || "Boş")}
                 >
                   <span className="font-semibold">{format(day, "d")}</span>
                   {info && (
@@ -288,6 +294,7 @@ const BookingManagement = () => {
                       {info.booking.is_manual ? "Bakım" : (info.booking.user_name || "Misafir")}
                     </span>
                   )}
+                  {isDateHoliday(day, allHolidays) && <div className="day-holiday-dot" />}
                 </div>
               );
             })}
