@@ -21,8 +21,17 @@ const AppRoutes = () => {
 
   if (loading || roleLoading) return null;
 
+  // Not logged in → always show Index (which has login screen)
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="*" element={<Index />} />
+      </Routes>
+    );
+  }
+
   // Logged in but not approved and not admin/mod → show pending screen
-  if (user && profile && !profile.approved && !hasAdminAccess) {
+  if (profile && !profile.approved && !hasAdminAccess) {
     return <PendingApproval />;
   }
 
