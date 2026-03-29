@@ -38,7 +38,7 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
                   <Link to="/admin">
                     <Button variant="outline" size="sm" className={cn(borderClass, textClass, "bg-transparent", hoverBgClass, "font-body gap-2")}>
                       <Shield className="w-4 h-4" />
-                      Admin
+                      Admin Paneli
                     </Button>
                   </Link>
                 )}

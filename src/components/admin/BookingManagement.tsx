@@ -41,6 +41,7 @@ const BookingManagement = () => {
   const [manualMode, setManualMode] = useState<"block" | "manual-booking" | null>(null);
   const [manualStartDate, setManualStartDate] = useState<Date | undefined>();
   const [manualEndDate, setManualEndDate] = useState<Date | undefined>();
+  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   // Edit state
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
@@ -225,7 +226,19 @@ const BookingManagement = () => {
 
       {/* Visual Calendar */}
       {selectedHouseId && (
-        <div className="bg-card rounded-xl border border-border p-6">
+        <div 
+          className="bg-card rounded-xl border border-border p-6"
+          onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+          onTouchEnd={(e) => {
+            if (touchStart === null) return;
+            const touchEnd = e.changedTouches[0].clientX;
+            const distance = touchStart - touchEnd;
+            const minSwipeDistance = 50;
+            if (distance > minSwipeDistance) setCurrentMonth(addMonths(currentMonth, 1));
+            else if (distance < -minSwipeDistance) setCurrentMonth(subMonths(currentMonth, 1));
+            setTouchStart(null);
+          }}
+        >
           <div className="flex items-center justify-between mb-6">
             <Button variant="ghost" size="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
               <ChevronLeft className="w-5 h-5" />
