@@ -3,7 +3,7 @@ import FeaturedStays from "@/components/FeaturedStays";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Index = () => {
   const { user, profile, loading } = useAuth();
@@ -18,7 +18,7 @@ const Index = () => {
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
         <div className="text-center max-w-md space-y-6">
           <div className="flex items-center justify-center gap-2 text-primary mb-2">
-            <Home className="w-10 h-10" />
+            <img src={logo} className="w-16 h-16 rounded-full object-cover shadow-xl border-2 border-primary/20" alt="HomeStay" />
             <span className="font-display text-3xl font-bold">HomeStay</span>
           </div>
           <h1 className="font-display text-2xl font-bold text-foreground">

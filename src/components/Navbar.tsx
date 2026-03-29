@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { lovable } from "@/integrations/lovable";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
   const [open, setOpen] = useState(false);
@@ -26,7 +27,7 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
     <nav className="absolute top-0 left-0 right-0 z-[100]">
       <div className="container mx-auto px-4 py-5 flex items-center justify-between">
         <a href="/" className={cn("flex items-center gap-2", textClass)}>
-          <Home className="w-6 h-6" />
+          <img src={logo} className="w-8 h-8 rounded-full object-cover border border-primary/20" alt="HomeStay" />
           <span className="font-display text-xl font-bold">HomeStay</span>
         </a>
 
