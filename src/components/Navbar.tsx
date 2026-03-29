@@ -27,8 +27,8 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
     <nav className="absolute top-0 left-0 right-0 z-[100]">
       <div className="container mx-auto px-4 py-5 flex items-center justify-between">
         <a href="/" className={cn("flex items-center gap-2", textClass)}>
-          <img src={logo} className="w-8 h-8 rounded-full object-cover border border-primary/20" alt="HomeStay" />
-          <span className="font-display text-xl font-bold">HomeStay</span>
+          <img src={logo} className="w-8 h-8 rounded-full object-cover border border-primary/20" alt="TatilRezervasyonum" />
+          <span className="font-display text-xl font-bold">TatilRezervasyonum</span>
         </a>
 
         <div className={cn("hidden md:flex items-center gap-8 font-body text-sm font-medium", textMutedClass)}>
