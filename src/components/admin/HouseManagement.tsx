@@ -22,15 +22,14 @@ interface HouseForm {
   image_url: string;
   location: string;
   tag: string;
-  latitude: string;
-  longitude: string;
+  google_maps_link: string;
   available_from: Date | undefined;
   available_to: Date | undefined;
 }
 
 const emptyForm: HouseForm = {
   title: "", description: "", private_description: "", capacity: "2", price: "", image_url: "", location: "", tag: "",
-  latitude: "", longitude: "",
+  google_maps_link: "",
   available_from: undefined, available_to: undefined,
 };
 
@@ -64,8 +63,7 @@ const HouseManagement = () => {
       image_url: form.image_url.trim() || null,
       location: form.location.trim() || null,
       tag: form.tag.trim() || null,
-      latitude: form.latitude ? parseFloat(form.latitude) : null,
-      longitude: form.longitude ? parseFloat(form.longitude) : null,
+      google_maps_link: form.google_maps_link.trim() || null,
       available_from: form.available_from ? format(form.available_from, "yyyy-MM-dd") : null,
       available_to: form.available_to ? format(form.available_to, "yyyy-MM-dd") : null,
     };
@@ -108,8 +106,7 @@ const HouseManagement = () => {
       image_url: h.image_url || "",
       location: h.location || "",
       tag: h.tag || "",
-      latitude: h.latitude ? String(h.latitude) : "",
-      longitude: h.longitude ? String(h.longitude) : "",
+      google_maps_link: h.google_maps_link || "",
       available_from: h.available_from ? new Date(h.available_from) : undefined,
       available_to: h.available_to ? new Date(h.available_to) : undefined,
     });
@@ -199,13 +196,9 @@ const HouseManagement = () => {
             <Label className="font-body">Etiket</Label>
             <Input value={form.tag} onChange={(e) => update("tag", e.target.value)} placeholder="Superhost" />
           </div>
-          <div className="space-y-2">
-            <Label className="font-body">Enlem (Latitude)</Label>
-            <Input type="number" step="any" value={form.latitude} onChange={(e) => update("latitude", e.target.value)} placeholder="40.7128" />
-          </div>
-          <div className="space-y-2">
-            <Label className="font-body">Boylam (Longitude)</Label>
-            <Input type="number" step="any" value={form.longitude} onChange={(e) => update("longitude", e.target.value)} placeholder="29.9441" />
+          <div className="md:col-span-2 space-y-2">
+            <Label className="font-body">Google Haritalar Bağlantısı (Onaylı üyelere gösterilir)</Label>
+            <Input value={form.google_maps_link} onChange={(e) => update("google_maps_link", e.target.value)} placeholder="https://maps.app.goo.gl/..." />
           </div>
           <div className="md:col-span-2 space-y-2">
             <Label className="font-body">Açıklama</Label>

@@ -6,22 +6,11 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ArrowLeft, CalendarIcon, MapPin, Users, Star, Lock } from "lucide-react";
+import { ArrowLeft, CalendarIcon, MapPin, Users, Star, Lock, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { format, eachDayOfInterval, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-
-// Fix default marker icon
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
 
 interface BookedDateInfo {
   date: Date;
@@ -40,6 +29,8 @@ const HouseDetail = () => {
   const [bookedDatesInfo, setBookedDatesInfo] = useState<BookedDateInfo[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [hasConfirmedBooking, setHasConfirmedBooking] = useState(false);
+  const [isStartOpen, setIsStartOpen] = useState(false);
+  const [isEndOpen, setIsEndOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -120,6 +111,18 @@ const HouseDetail = () => {
     }
   };
 
+  const handleStartDateSelect = (date: Date | undefined) => {
+    setStartDate(date);
+    if (date) {
+      setIsStartOpen(false);
+      // Ensure current popover closes before opening next
+      setTimeout(() => setIsEndOpen(true), 150);
+      if (endDate && date >= endDate) {
+        setEndDate(undefined);
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -140,8 +143,6 @@ const HouseDetail = () => {
   const nightCount = startDate && endDate
     ? Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)))
     : 0;
-
-  const hasCoords = house.latitude && house.longitude;
 
   return (
     <div className="min-h-screen bg-background">
@@ -208,38 +209,34 @@ const HouseDetail = () => {
               </div>
             )}
 
-            {/* Map - only for confirmed users or admin/mod */}
-            {canSeePrivate && hasCoords && (
+            {/* Map link - only for confirmed users or admin/mod */}
+            {canSeePrivate && house.google_maps_link && (
               <div className="bg-card rounded-xl border border-border p-6">
                 <h3 className="font-display text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-accent" />
                   Konum
                 </h3>
-                <div className="rounded-xl overflow-hidden h-[300px] md:h-[400px] touch-pan-y">
-                  <MapContainer
-                    center={[Number(house.latitude), Number(house.longitude)]}
-                    zoom={13}
-                    scrollWheelZoom={false}
-                    dragging={true}
-                    style={{ height: "100%", width: "100%" }}
+                <div className="flex flex-col items-center justify-center py-8 bg-muted/30 rounded-xl border border-dashed border-border">
+                  <MapPin className="w-12 h-12 text-muted-foreground mb-4 opacity-20" />
+                  <p className="font-body text-sm text-center text-muted-foreground mb-6 max-w-xs">
+                    Evin tam konumuna gitmek için aşağıdaki butona tıklayabilirsiniz.
+                  </p>
+                  <Button 
+                    className="font-body gap-2" 
+                    onClick={() => window.open(house.google_maps_link, "_blank")}
                   >
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Marker position={[Number(house.latitude), Number(house.longitude)]}>
-                      <Popup>{house.title}</Popup>
-                    </Marker>
-                  </MapContainer>
+                    <ExternalLink className="w-4 h-4" />
+                    Google Haritalarda Gör
+                  </Button>
                 </div>
               </div>
             )}
 
-            {!canSeePrivate && hasCoords && (
+            {!canSeePrivate && (
               <div className="bg-muted/50 rounded-xl border border-border p-6 text-center">
                 <MapPin className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
                 <p className="font-body text-sm text-muted-foreground">
-                  Harita bilgisi sadece onaylanmış rezervasyonu olan üyeler tarafından görülebilir.
+                  Detaylı konum bilgisi sadece onaylanmış rezervasyonu olan üyeler tarafından görülebilir.
                 </p>
               </div>
             )}
@@ -257,13 +254,14 @@ const HouseDetail = () => {
               <div className="flex flex-wrap gap-3 mb-2 font-body text-xs">
                 <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-destructive/70" /> Dolu</div>
                 <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-yellow-400" /> Bekliyor</div>
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-green-600" /> Giriş</div>
                 <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-background border border-border" /> Boş</div>
               </div>
 
               <div className="space-y-3">
                 <div className="space-y-2">
                   <label className="font-body text-sm font-medium text-foreground">Giriş Tarihi</label>
-                  <Popover>
+                  <Popover open={isStartOpen} onOpenChange={setIsStartOpen}>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !startDate && "text-muted-foreground")}>
                         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -274,17 +272,22 @@ const HouseDetail = () => {
                       <Calendar
                         mode="single"
                         selected={startDate}
-                        onSelect={setStartDate}
+                        onSelect={handleStartDateSelect}
                         disabled={isDateDisabled}
                         initialFocus
                         className="p-3 pointer-events-auto"
                         modifiers={{
                           confirmed: bookedDatesInfo.filter(d => d.status === "confirmed").map(d => d.date),
                           pending: bookedDatesInfo.filter(d => d.status === "pending").map(d => d.date),
+                          selectedStart: startDate ? [startDate] : [],
                         }}
                         modifiersClassNames={{
                           confirmed: "bg-destructive/20 text-destructive",
                           pending: "bg-yellow-100 text-yellow-800",
+                          selectedStart: "bg-green-600 text-white hover:bg-green-700",
+                        }}
+                        classNames={{
+                          day_selected: "bg-green-600 text-white hover:bg-green-700 focus:bg-green-600 focus:text-white"
                         }}
                         components={{
                           DayContent: ({ date }) => {
@@ -308,7 +311,7 @@ const HouseDetail = () => {
 
                 <div className="space-y-2">
                   <label className="font-body text-sm font-medium text-foreground">Çıkış Tarihi</label>
-                  <Popover>
+                  <Popover open={isEndOpen} onOpenChange={setIsEndOpen}>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !endDate && "text-muted-foreground")}>
                         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -326,10 +329,12 @@ const HouseDetail = () => {
                         modifiers={{
                           confirmed: bookedDatesInfo.filter(d => d.status === "confirmed").map(d => d.date),
                           pending: bookedDatesInfo.filter(d => d.status === "pending").map(d => d.date),
+                          selectedStart: startDate ? [startDate] : [],
                         }}
                         modifiersClassNames={{
                           confirmed: "bg-destructive/20 text-destructive",
                           pending: "bg-yellow-100 text-yellow-800",
+                          selectedStart: "bg-green-600 text-white hover:bg-green-700",
                         }}
                         components={{
                           DayContent: ({ date }) => {
