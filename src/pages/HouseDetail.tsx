@@ -31,6 +31,7 @@ const HouseDetail = () => {
   const [hasConfirmedBooking, setHasConfirmedBooking] = useState(false);
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isEndOpen, setIsEndOpen] = useState(false);
+  const [checkoutMonth, setCheckoutMonth] = useState<Date>(new Date());
 
   useEffect(() => {
     if (!id) return;
@@ -113,6 +114,7 @@ const HouseDetail = () => {
   const handleStartDateSelect = (date: Date | undefined) => {
     setStartDate(date);
     if (date) {
+      setCheckoutMonth(date); // Show the same month for the checkout calendar
       setIsStartOpen(false);
       // Ensure current popover closes before opening next
       setTimeout(() => setIsEndOpen(true), 150);
@@ -322,6 +324,8 @@ const HouseDetail = () => {
                         mode="single"
                         selected={endDate}
                         onSelect={setEndDate}
+                        month={checkoutMonth}
+                        onMonthChange={setCheckoutMonth}
                         disabled={(date) => isDateDisabled(date) || (startDate ? date <= startDate : false)}
                         initialFocus
                         className="p-3 pointer-events-auto"
