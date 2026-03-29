@@ -62,7 +62,7 @@ const MyBookings = () => {
         ) : bookings.length === 0 ? (
           <p className="font-body text-muted-foreground">Henüz bir rezervasyon talebiniz yok.</p>
         ) : (
-          <div className="bg-card rounded-xl border border-border overflow-hidden">
+          <div className="bg-card rounded-xl border border-border overflow-hidden overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

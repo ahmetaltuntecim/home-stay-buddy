@@ -23,7 +23,7 @@ const Navbar = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
   };
 
   return (
-    <nav className="absolute top-0 left-0 right-0 z-50">
+    <nav className="absolute top-0 left-0 right-0 z-[100]">
       <div className="container mx-auto px-4 py-5 flex items-center justify-between">
         <a href="/" className={cn("flex items-center gap-2", textClass)}>
           <Home className="w-6 h-6" />

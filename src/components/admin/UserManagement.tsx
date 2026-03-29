@@ -71,7 +71,7 @@ const UserManagement = () => {
   if (loading) return <p className="font-body text-muted-foreground">Yükleniyor...</p>;
 
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden">
+    <div className="bg-card rounded-xl border border-border overflow-hidden overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>

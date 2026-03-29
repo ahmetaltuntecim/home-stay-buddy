@@ -223,7 +223,7 @@ const HouseManagement = () => {
         </form>
       </div>
 
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden overflow-x-auto">
         <h3 className="font-display text-xl font-bold text-foreground p-6 pb-4">Mevcut Evler</h3>
         <Table>
           <TableHeader>

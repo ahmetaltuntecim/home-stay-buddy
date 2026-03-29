@@ -334,7 +334,7 @@ const BookingManagement = () => {
       )}
 
       {/* Bookings table */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden overflow-x-auto">
         <h3 className="font-display text-xl font-bold text-foreground p-6 pb-4">
           Rezervasyon Talepleri
         </h3>

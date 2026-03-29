@@ -23,7 +23,7 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="bookings">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 w-full justify-start overflow-x-auto flex-nowrap h-auto p-1 overflow-y-hidden">
             <TabsTrigger value="bookings" className="gap-2 font-body">
               <CalendarCheck className="w-4 h-4" />
               Takvim & Rezervasyonlar
