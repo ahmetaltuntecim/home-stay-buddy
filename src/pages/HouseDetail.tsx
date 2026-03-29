@@ -46,8 +46,7 @@ const HouseDetail = () => {
           setHouse((prev: any) => ({
             ...prev,
             private_description: privateData[0].private_description,
-            latitude: privateData[0].latitude,
-            longitude: privateData[0].longitude,
+            google_maps_link: privateData[0].google_maps_link,
           }));
           setHasConfirmedBooking(true);
         }
