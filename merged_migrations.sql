@@ -112,7 +112,8 @@ END $$;
 CREATE TABLE public.bookings (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   house_id uuid NOT NULL REFERENCES public.houses(id) ON DELETE CASCADE,
-  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  is_manual boolean DEFAULT false,
   start_date date NOT NULL,
   end_date date NOT NULL,
   status booking_status NOT NULL DEFAULT 'pending',
@@ -245,6 +246,8 @@ SET search_path = public
 AS $$
   SELECT b.start_date, b.end_date, b.status::text,
     CASE
+      WHEN b.is_manual = true THEN 'Kapalı'
+      WHEN b.user_id IS NULL THEN 'Kapalı'
       WHEN b.user_id = '00000000-0000-0000-0000-000000000000' THEN 'Kapalı'
       ELSE COALESCE(p.display_name, 'Misafir')
     END AS display_name

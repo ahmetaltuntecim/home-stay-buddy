@@ -23,6 +23,7 @@ interface Booking {
   end_date: string;
   status: BookingStatus;
   created_at: string;
+  is_manual?: boolean;
   house_title?: string;
   user_name?: string;
 }
@@ -137,17 +138,28 @@ const BookingManagement = () => {
       toast.error("Başlangıç ve bitiş tarihi seçin");
       return;
     }
-    // Create a "confirmed" booking with no user to block dates
-    const { error } = await supabase.from("bookings").insert({
+    
+    // Get current authenticated user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const payload = {
       house_id: selectedHouseId,
-      user_id: "00000000-0000-0000-0000-000000000000",
+      user_id: user?.id || null, // Current user's ID
+      is_manual: true,
       start_date: format(manualStartDate, "yyyy-MM-dd"),
       end_date: format(manualEndDate, "yyyy-MM-dd"),
       status: "confirmed" as const,
-    });
+    };
+
+    console.log("Blocking dates payload:", payload);
+
+    const { error, data } = await supabase.from("bookings").insert(payload).select();
+    
     if (error) {
+      console.error("Booking error details:", error);
       toast.error("Tarihler kapatılamadı: " + error.message);
     } else {
+      console.log("Booking success:", data);
       toast.success("Tarihler kapatıldı");
       setManualStartDate(undefined);
       setManualEndDate(undefined);
@@ -161,13 +173,18 @@ const BookingManagement = () => {
       toast.error("Başlangıç ve bitiş tarihi seçin");
       return;
     }
+    
+    const { data: { user } } = await supabase.auth.getUser();
+
     const { error } = await supabase.from("bookings").insert({
       house_id: selectedHouseId,
-      user_id: "00000000-0000-0000-0000-000000000000",
+      user_id: user?.id || null,
+      is_manual: true,
       start_date: format(manualStartDate, "yyyy-MM-dd"),
       end_date: format(manualEndDate, "yyyy-MM-dd"),
       status: "confirmed" as const,
     });
+    
     if (error) {
       toast.error("Rezervasyon eklenemedi: " + error.message);
     } else {
@@ -255,7 +272,7 @@ const BookingManagement = () => {
                   <span className="font-semibold">{format(day, "d")}</span>
                   {info && (
                     <span className="text-[9px] truncate max-w-full px-0.5 leading-tight">
-                      {info.booking.user_name === "—" ? "Bakım" : info.booking.user_name}
+                      {info.booking.is_manual ? "Bakım" : (info.booking.user_name || "Misafir")}
                     </span>
                   )}
                 </div>
@@ -353,7 +370,7 @@ const BookingManagement = () => {
               <TableRow key={b.id}>
                 <TableCell className="font-body font-medium">{b.house_title}</TableCell>
                 <TableCell className="font-body text-muted-foreground">
-                  {b.user_id === "00000000-0000-0000-0000-000000000000" ? "Manuel / Bakım" : b.user_name}
+                  {b.is_manual ? "Manuel / Bakım" : (b.user_name || "Misafir")}
                 </TableCell>
                 <TableCell className="font-body text-xs">
                   {editingBookingId === b.id ? (
