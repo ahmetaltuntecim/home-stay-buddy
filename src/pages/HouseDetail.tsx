@@ -252,43 +252,6 @@ const HouseDetail = () => {
               </div>
             )}
 
-            {/* Booking calendar with names */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="font-display text-lg font-bold text-foreground mb-4">Rezervasyon Takvimi</h3>
-              <div className="flex flex-wrap gap-4 mb-4 font-body text-xs">
-                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-destructive/70" /> Dolu</div>
-                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-yellow-400" /> Bekliyor</div>
-                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-background border border-border" /> Boş</div>
-              </div>
-              <Calendar
-                mode="single"
-                className="p-3 pointer-events-auto"
-                modifiers={{
-                  confirmed: bookedDatesInfo.filter(d => d.status === "confirmed").map(d => d.date),
-                  pending: bookedDatesInfo.filter(d => d.status === "pending").map(d => d.date),
-                }}
-                modifiersClassNames={{
-                  confirmed: "bg-destructive/20 text-destructive",
-                  pending: "bg-yellow-100 text-yellow-800",
-                }}
-                disabled={isDateDisabled}
-                components={{
-                  DayContent: ({ date }) => {
-                    const info = getDateInfo(date);
-                    return (
-                      <div className="flex flex-col items-center">
-                        <span>{date.getDate()}</span>
-                        {info && (
-                          <span className="text-[8px] leading-tight truncate max-w-[3rem]">
-                            {info.userName}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  }
-                }}
-              />
-            </div>
           </div>
 
           {/* Right: Booking Card - only for logged-in users */}
@@ -297,6 +260,12 @@ const HouseDetail = () => {
               <div className="font-body">
                 <span className="text-2xl font-bold text-foreground">₺{Number(house.price).toLocaleString()}</span>
                 <span className="text-muted-foreground"> / gece</span>
+              </div>
+
+              <div className="flex flex-wrap gap-3 mb-2 font-body text-xs">
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-destructive/70" /> Dolu</div>
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-yellow-400" /> Bekliyor</div>
+                <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-background border border-border" /> Boş</div>
               </div>
 
               <div className="space-y-3">
