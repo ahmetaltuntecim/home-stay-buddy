@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const ADMIN_EMAIL = Deno.env.get("ADMIN_EMAIL") || "ahmetaltuntecim@gmail.com";
-const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://tatilrezervasyonum.vercel.app"; // Lütfen kendi URL'nizle güncelleyin
+const FRONTEND_URL = Deno.env.get("FRONTEND_URL") || "https://app.ahmetaltuntecim.space"; // Lütfen kendi URL'nizle güncelleyin
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
@@ -175,7 +175,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "Home Stay Buddy <onboarding@resend.dev>",
+      from: "TatilRezervasyonum <noreply@app.ahmetaltuntecim.space>",
       to: [to],
       subject: subject,
       html: html,
