@@ -272,3 +272,4 @@ CREATE POLICY "Users can insert their own profile"
   ON public.profiles FOR INSERT
   TO public
   WITH CHECK (auth.uid() = user_id AND approved = false);
+CREATE POLICY "Approved users can view houses" ON public.houses FOR SELECT TO authenticated USING (public.get_own_approved());

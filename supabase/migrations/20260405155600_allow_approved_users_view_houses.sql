@@ -1,0 +1,1 @@
+CREATE POLICY "Approved users can view houses" ON public.houses FOR SELECT TO authenticated USING (public.get_own_approved());
