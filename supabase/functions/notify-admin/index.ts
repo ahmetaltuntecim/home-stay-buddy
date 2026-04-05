@@ -21,14 +21,18 @@ function formatDate(dateStr: string) {
   return `${day}/${month}/${year} ${dayName}`;
 }
 
-const adminButton = (path: string) => `
+const adminButton = (path: string) => {
+  const cleanBase = FRONTEND_URL.replace(/\/+$/, "");
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `
   <div style="margin-top: 30px;">
-    <a href="${FRONTEND_URL}${path}" 
+    <a href="${cleanBase}${cleanPath}" 
        style="background-color: #3b82f6; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
        Admin Paneline Git
     </a>
   </div>
 `;
+};
 
 serve(async (req) => {
   try {
